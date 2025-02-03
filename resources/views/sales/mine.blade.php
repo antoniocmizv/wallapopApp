@@ -2,28 +2,22 @@
 
 @section('content')
 <div class="container">
-    <h1 class="text-center my-4">Anuncios Disponibles</h1>
+    <h1 class="text-center my-4">Mis Anuncios</h1>
 
     @if($sales->isEmpty())
         <div class="alert alert-info text-center">
-            No hay anuncios disponibles en este momento.
+            No tienes anuncios creados.
         </div>
     @else
         <div class="row">
             @foreach($sales as $sale)
                 <div class="col-md-4 my-3">
                     <div class="card">
-                        <?php 
-                     // {{echo $sale->img;}}?>
-                        <!-- Miniatura -->
                         @if($sale->img)
-                            <img src="storage/{{$sale->img}}" class="card-img-top" alt="{{ $sale->product }}">
+                            <img src="{{ asset('storage/' . $sale->img) }}" class="card-img-top" alt="{{ $sale->product }}">
                         @else
                             <img src="{{ asset('images/default-thumbnail.jpg') }}" class="card-img-top" alt="Sin imagen">
-                            
                         @endif
-                        <!-- Contenido realizo por Castillo -->
-
                         <div class="card-body">
                             <h5 class="card-title">{{ $sale->product }}</h5>
                             <p class="card-text">

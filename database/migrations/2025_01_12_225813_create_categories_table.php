@@ -16,6 +16,20 @@ return new class extends Migration
             $table->string('name');
             $table->timestamps();
         });
+
+        // Creo las categorías por defecto
+        DB::table('categories')->insert([
+            ['name' => 'Electrónica', 'created_at' => now(), 'updated_at' => now()],
+            ['name' => 'Muebles', 'created_at' => now(), 'updated_at' => now()],
+            ['name' => 'Coches', 'created_at' => now(), 'updated_at' => now()],
+            ['name' => 'Deporte', 'created_at' => now(), 'updated_at' => now()],
+            ['name' => 'Hogar', 'created_at' => now(), 'updated_at' => now()],
+            ['name' => 'Tecnología', 'created_at' => now(), 'updated_at' => now()],
+            ['name' => 'Moda', 'created_at' => now(), 'updated_at' => now()],
+            ['name' => 'Juguetes', 'created_at' => now(), 'updated_at' => now()],
+            ['name' => 'Libros', 'created_at' => now(), 'updated_at' => now()],
+            ['name' => 'Otros', 'created_at' => now(), 'updated_at' => now()],
+        ]);
     }
 
     /**

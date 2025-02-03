@@ -11,15 +11,16 @@ use Illuminate\Support\Facades\Auth;
 
 class SaleController extends Controller
 {
-    public function __construct()
-    {
-        // Se protege todas las rutas excepto index
-        $this->middleware('auth')->except(['index']);
-    }
+
     public function index()
     {
         $sales = Sale::where('isSold', false)->with('category', 'user')->get();
         return view('sales.index', compact('sales'));
+    }
+    public function mine()
+    {
+        $sales = Sale::where('user_id', Auth::id())->with('category')->get();
+        return view('sales.mine', compact('sales'));
     }
 
     public function create()
@@ -47,10 +48,25 @@ class SaleController extends Controller
             'category_id' => $request->category_id,
             'user_id' => Auth::id(),
             'isSold' => false,
+            // No se asigna 'img' aquí, se actualizará luego si se sube algún archivo
         ]);
 
         if ($request->hasFile('images')) {
-            foreach ($request->file('images') as $image) {
+            $images = $request->file('images');
+            // Si se envían varias imagenes, asigna la primera al campo 'img'
+            $firstImage = array_shift($images);
+            $firstPath = $firstImage->store('images', 'public');
+
+            // Actualiza el campo 'img' de la venta con la ruta de la primera imagen
+            $sale->update(['img' => $firstPath]);
+
+            Image::create([
+                'sale_id' => $sale->id,
+                'route' => $firstPath,
+            ]);
+
+            // Guarda las imágenes restantes, si existen
+            foreach ($images as $image) {
                 $path = $image->store('images', 'public');
                 Image::create([
                     'sale_id' => $sale->id,
@@ -58,7 +74,6 @@ class SaleController extends Controller
                 ]);
             }
         }
-
         return redirect()->route('sales.index')->with('success', 'Anuncio creado exitosamente.');
     }
 
@@ -73,6 +88,13 @@ class SaleController extends Controller
         $sale = Sale::findOrFail($id);
         $categories = Category::all();
         return view('sales.edit', compact('sale', 'categories'));
+    }
+
+    public function sell($id)
+    {
+        $sale = Sale::findOrFail($id);
+        $sale->update(['isSold' => true]);
+        return redirect()->route('sales.index')->with('success', 'El producto ha sido marcado como vendido.');
     }
 
     public function update(Request $request, $id)

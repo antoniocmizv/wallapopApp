@@ -19,6 +19,16 @@ return new class extends Migration {
             $table->timestamps();
         });
 
+        //Creo un usuario por defecto
+        DB::table('users')->insert([
+            'name' => 'admin',
+            'email' => 'admin@test.es',
+            'password' => password_hash('password', PASSWORD_DEFAULT),
+            'role' => 'admin',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {
             $table->string('email')->primary();
