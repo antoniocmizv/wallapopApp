@@ -14,13 +14,13 @@
                 <div class="col-md-4 my-3">
                     <div class="card">
                         <?php 
-                     // {{echo $sale->img;}}?>
+                                     // {{echo $sale->img;}}?>
                         <!-- Miniatura -->
                         @if($sale->img)
                             <img src="storage/{{$sale->img}}" class="card-img-top" alt="{{ $sale->product }}">
                         @else
                             <img src="{{ asset('images/default-thumbnail.jpg') }}" class="card-img-top" alt="Sin imagen">
-                            
+
                         @endif
                         <!-- Contenido realizo por Castillo -->
 
@@ -35,6 +35,11 @@
                     </div>
                 </div>
             @endforeach
+
+
+        </div>
+                <div class="d-flex justify-content-center">
+            {{ $sales->links('pagination::bootstrap-4') }}
         </div>
     @endif
 </div>

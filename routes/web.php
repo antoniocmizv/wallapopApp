@@ -1,4 +1,5 @@
 <?php
+use App\Models\User;
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\SaleController;
@@ -7,6 +8,8 @@ use App\Http\Controllers\SettingController;
 use App\Http\Controllers\ImageController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Notifications\HardcodedNotification;
+
 
 Route::get('/', [SaleController::class, 'index'])->name('home');
 
@@ -18,6 +21,10 @@ Route::post('logout', [LoginController::class, 'logout'])->name('logout');
 Route::get('register', [RegisterController::class, 'showRegistrationForm'])->name('register');
 Route::post('register', [RegisterController::class, 'register']);
 
+Route::get('test-notify', function () {
+  
+});
+
 // Rutas protegidas (solo para usuarios autentificados)
 Route::middleware('auth')->group(function () {
     Route::resource('sales', SaleController::class);
@@ -25,6 +32,8 @@ Route::middleware('auth')->group(function () {
     Route::resource('categories', CategoryController::class);
     Route::resource('settings', SettingController::class);
     Route::resource('images', ImageController::class);
-    Route::post('sales/{id}/sell', [SaleController::class, 'sell'])->name('sales.sell');
-    
+    Route::post('sales/{id}/sell/{buyer}', [SaleController::class, 'sell'])->name('sales.sell');   
+    Route::get('notificaciones', function () {
+        return view('notifications.index');
+    })->name('notifications.index'); 
 });

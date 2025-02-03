@@ -20,8 +20,8 @@
             </ul>
             <div class="d-flex justify-content-between">
                 <a href="{{ route('sales.index') }}" class="btn btn-secondary btn-sm">Volver</a>
-                @if(!$sale->isSold && Auth::check() && $sale->user_id === Auth::id())
-                    <form action="{{ route('sales.sell', $sale->id) }}" method="POST" onsubmit="return confirm('¿Seguro que deseas marcarlo como vendido?');">
+                @if(!$sale->isSold && Auth::check())
+                        <form action="{{ route('sales.sell', [$sale->id, Auth::id()]) }}" method="POST" onsubmit="return confirm('¿Seguro que deseas marcarlo como vendido?');">
                         @csrf
                         <button type="submit" class="btn btn-success btn-sm">Comprar</button>
                     </form>

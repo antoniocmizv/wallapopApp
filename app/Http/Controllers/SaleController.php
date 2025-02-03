@@ -8,13 +8,16 @@ use App\Models\Category;
 use App\Models\Setting;
 use App\Models\Image;
 use Illuminate\Support\Facades\Auth;
+use App\Models\User;
+use App\Notifications\ProductPurchased;
+use App\Notifications\HardcodedNotification;
 
 class SaleController extends Controller
 {
 
     public function index()
     {
-        $sales = Sale::where('isSold', false)->with('category', 'user')->get();
+        $sales = Sale::where('isSold', false)->with('category', 'user')->paginate(2);
         return view('sales.index', compact('sales'));
     }
     public function mine()
@@ -90,10 +93,19 @@ class SaleController extends Controller
         return view('sales.edit', compact('sale', 'categories'));
     }
 
-    public function sell($id)
+
+
+    public function sell($id, $buyer)
     {
         $sale = Sale::findOrFail($id);
-        $sale->update(['isSold' => true]);
+        $sale->update(['isSold' => true, 'buyerId' => $buyer]);
+    
+        // Obtener la instancia del vendedor a partir del id del usuario
+        $seller = User::find($sale->user_id);
+        
+        // Verifica que $sale sea una instancia de Sale antes de notificar
+        $seller->notify(new ProductPurchased($sale));
+    
         return redirect()->route('sales.index')->with('success', 'El producto ha sido marcado como vendido.');
     }
 

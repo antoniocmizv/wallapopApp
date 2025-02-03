@@ -18,6 +18,9 @@
               <ul class="navbar-nav ms-auto">
                 @auth
                   <li class="nav-item">
+                    <a class="nav-link" href="{{ route('notifications.index') }}">Notificaciones ({{ Auth::user()->unreadNotifications->count() }})</a>
+                  </li>
+                  <li class="nav-item">
                     <a class="nav-link" href="{{route('sales.mine')}}">{{ Auth::user()->name }}</a>
                   </li>
                   <li class="nav-item">
