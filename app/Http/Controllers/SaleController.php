@@ -11,6 +11,11 @@ use Illuminate\Support\Facades\Auth;
 
 class SaleController extends Controller
 {
+    public function __construct()
+    {
+        // Se protege todas las rutas excepto index
+        $this->middleware('auth')->except(['index']);
+    }
     public function index()
     {
         $sales = Sale::where('isSold', false)->with('category', 'user')->get();
@@ -25,7 +30,7 @@ class SaleController extends Controller
 
     public function store(Request $request)
     {
-        $maxImages = Setting::where('name', 'maxImages')->value('maxImages');
+        $maxImages = 5;
         $request->validate([
             'product' => 'required|string|max:255',
             'description' => 'required|string',
