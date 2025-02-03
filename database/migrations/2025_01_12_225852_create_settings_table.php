@@ -16,6 +16,12 @@ return new class extends Migration
         $table->string('name');
         $table->integer('maxImages')->default(5); // Límite de imágenes
     });
+
+    // Inserta un registro en la tabla settings
+    DB::table('settings')->insert([
+        'name' => 'Configuración de la aplicación',
+        'maxImages' => 5,
+    ]);
 }
 
     /**

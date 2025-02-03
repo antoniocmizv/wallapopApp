@@ -15,10 +15,18 @@ use App\Notifications\HardcodedNotification;
 class SaleController extends Controller
 {
 
-    public function index()
+    public function index(Request $request)
     {
-        $sales = Sale::where('isSold', false)->with('category', 'user')->paginate(2);
-        return view('sales.index', compact('sales'));
+        $query = Sale::where('isSold', false)->with('category', 'user');
+        
+        if ($request->has('category_id') && $request->category_id != '') {
+            $query->where('category_id', $request->category_id);
+        }
+        
+        $sales = $query->paginate(3);
+        $categories = Category::all();
+        
+        return view('sales.index', compact('sales', 'categories'));
     }
     public function mine()
     {
@@ -112,7 +120,7 @@ class SaleController extends Controller
     public function update(Request $request, $id)
     {
         $sale = Sale::findOrFail($id);
-        $maxImages = Setting::where('name', 'maxImages')->value('maxImages');
+        $maxImages = 5;
         $request->validate([
             'product' => 'required|string|max:255',
             'description' => 'required|string',
@@ -147,5 +155,23 @@ class SaleController extends Controller
         $sale = Sale::findOrFail($id);
         $sale->delete();
         return redirect()->route('sales.index')->with('success', 'Anuncio eliminado exitosamente.');
+    }
+
+
+   
+    public function activate($id)
+    {
+        $sale = Sale::findOrFail($id);
+        // Verifica que el usuario actual sea el propietario del anuncio
+        if ($sale->user_id !== Auth::id()) {
+            abort(403);
+        }
+        // Reactivar el anuncio: marcar isSold como false y limpiar buyerId
+        $sale->update([
+            'isSold' => false,
+            'buyerId' => null,
+        ]);
+    
+        return redirect()->back()->with('success', 'El producto ha sido reactivado exitosamente.');
     }
 }

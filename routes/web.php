@@ -9,6 +9,7 @@ use App\Http\Controllers\ImageController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Notifications\HardcodedNotification;
+use App\Http\Controllers\NotificationController;
 
 
 Route::get('/', [SaleController::class, 'index'])->name('home');
@@ -22,7 +23,10 @@ Route::get('register', [RegisterController::class, 'showRegistrationForm'])->nam
 Route::post('register', [RegisterController::class, 'register']);
 
 Route::get('test-notify', function () {
-  
+    // Obtiene el primer usuario de la base de datos (ajusta si lo necesitas)
+    $user = User::first();
+    $user->notify(new HardcodedNotification());
+    return "Notificación enviada al usuario: " . $user->name;
 });
 
 // Rutas protegidas (solo para usuarios autentificados)
@@ -36,4 +40,9 @@ Route::middleware('auth')->group(function () {
     Route::get('notificaciones', function () {
         return view('notifications.index');
     })->name('notifications.index'); 
+    Route::post('notifications/{id}/read', [NotificationController::class, 'markAsRead'])->name('notifications.read');
+    Route::post('sales/{id}/activate', [SaleController::class, 'activate'])->name('sales.activate');
+
+    Route::get('sales/{id}/edit', [SaleController::class, 'edit'])->name('sales.edit');
+    Route::put('sales/{id}', [SaleController::class, 'update'])->name('sales.update');
 });
